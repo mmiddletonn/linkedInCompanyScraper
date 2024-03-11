@@ -36,33 +36,42 @@ class session:
         if self.driver is None:
             raise Exception("Driver has not been initialized.")
 
-        all_email_addresses = []
+        all_contacts = []  # Store contacts as dictionaries
 
         for page in range(1, max_pages + 1):
             self.driver.get(f"{base_url}{query}&page={page}")
-            
+
             xpath_expression = "//a[contains(@class,'app-aware-link') and contains(@class, 'scale-down') and not(contains(@href, 'headless'))]"
             elements = self.driver.find_elements(By.XPATH, xpath_expression)
-            
+
             profile_urls = [element.get_attribute('href').split("?")[0] + "/overlay/contact-info/" for element in elements]
 
             for profile_url in profile_urls:
                 try:
                     self.driver.get(profile_url)
-                    time.sleep(1)
+                    time.sleep(1)  # Wait for page elements to load
+                    
+                    # Extracting title
+                    title_elements = self.driver.find_elements(By.XPATH, '//div[contains(@class, "text-body-medium break-words")]')
+                    title = title_elements[0].text if title_elements else "No title available"
+                    
+                    # Extracting email
                     email_elements = self.driver.find_elements(By.XPATH, '//a[contains(@href, "mailto:")]')
                     for email_element in email_elements:
                         email_address = email_element.get_attribute('href').replace('mailto:', '')
-                        all_email_addresses.append(email_address)
+                        contact = {"title": title, "email": email_address}
+                        all_contacts.append(contact)
                 except Exception as e:
                     print(f"An error occurred while trying to fetch the profile: {e}")
                 time.sleep(1)
-        
-        if not all_email_addresses:
+
+        if not all_contacts:
             return "None"
         else:
-            unique_email_addresses = list(set(all_email_addresses))
-            return str(unique_email_addresses)
+            # Optionally, filter duplicates based on email addresses if necessary
+            unique_contacts = {contact['email']: contact for contact in all_contacts}.values()
+            return list(unique_contacts)
+
 
     def wait(self):
         input("Press enter to continue...")
