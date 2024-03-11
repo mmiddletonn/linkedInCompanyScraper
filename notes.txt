@@ -1,2 +1,5 @@
 https://www.linkedin.com/search/results/all/?keywords=
+https://www.linkedin.com/search/results/people/?keywords=
 https://www.linkedin.com/login
+app-aware-link  scale-down
+https://www.linkedin.com/search/results/people/headless?origin=OTHER

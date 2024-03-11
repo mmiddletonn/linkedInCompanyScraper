@@ -1,18 +1,15 @@
 import os_detection
 import linkedin
 
-import time
-
 platform = os_detection.platform
 session = linkedin.session(platform)
 
-session.login()
+companies = ["google", "apple"]
+employee_emails = {}
 
-session.wait()
+for company in companies:
+    employee_emails[f"{company}"] = session.scrape(f"{company}")
 
-session.search("google")
+print(employee_emails)
 
-# session.find_employee()
-
-time.sleep(5)
 session.end()
